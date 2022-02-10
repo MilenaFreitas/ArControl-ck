@@ -236,7 +236,7 @@ void conectaMQTT(){
   //Estabelece conexao c MQTT/WIFI
    if(!client.connected()){
     Serial.println("conectando...");
-    if (client.connect("AR-redacao-entrada")){
+    if (client.connect("AR-redacao-CK")){
       Serial.println("CONECTADO! :)");
       client.publish ("teste", "hello word"); 
       client.subscribe (topic1);
@@ -396,7 +396,7 @@ void arLiga(){
 void perguntaMQTT(){  
     int Hora = data.tm_hour;
     int data_semana = data.tm_wday; //devolve em numero
-    if(data_semana==6 || data_semana==0 ||Hora<=Hliga || Hora>=Hdes){
+    if(data_semana==6||data_semana==0||Hora<Hliga||Hora>=Hdes){
       //se foir sabado ou domingo ou antes de 7h ou depois de 20h 
       //se tiver movimento
       vez=vez+1;
@@ -418,7 +418,7 @@ void perguntaMQTT(){
           Serial.println("fica rodando no whilee");
           payloadMQTT();
           delay(5000);
-          if((data_semana!=6 && data_semana!=0) || (Hora>=Hliga && Hora<=Hdes)){
+          if((data_semana!=6 && data_semana!=0)||(Hora>=Hliga && Hora<Hdes)){
             vez=0;
             break;
           }
@@ -437,7 +437,7 @@ void verificaDia(void *pvParameters){
     //int data_semana = data.tm_wday; //devolve em numero
     if(data_semana != 0 && data_semana != 6){
       //se n for sabado nem domingo 
-      if(Hora>=Hliga && Hora<=Hdes){
+      if(Hora>=Hliga && Hora<Hdes){
         //esta no horario de ligar
         if(ultimoGatilho>millis()){
           //tem movimento
