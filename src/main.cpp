@@ -391,7 +391,7 @@ void arLiga(){
   } else if(tempAtual==tIdeal){
     Serial.println("temp ideal");	
   }
-  delay(30000);
+  delay(300000);
 }
 void perguntaMQTT(){  
     int Hora = data.tm_hour;
@@ -458,7 +458,7 @@ void verificaDia(void *pvParameters){
       arDesligado();
       perguntaMQTT();
     }
-    vTaskDelay(pdMS_TO_TICKS(30000));
+    vTaskDelay(pdMS_TO_TICKS(5000));
   }
 }
 void PinConfig(){
