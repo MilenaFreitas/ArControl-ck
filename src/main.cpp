@@ -340,12 +340,12 @@ void IRAM_ATTR mudaStatusPir(){
   movimento=1;
 }
 void arDesligado(){
-  digitalWrite(con, 0);
-  digitalWrite(ledCon, digitalRead(con));
-  digitalWrite(eva, 0);
-  digitalWrite(ledEva, digitalRead(eva));
+  digitalWrite(con, 1);
+  digitalWrite(ledCon, !digitalRead(con));
+  digitalWrite(eva, 1);
+  digitalWrite(ledEva, !digitalRead(eva));
 }
-void payloadMQTT(){ 
+void payloadMQTT(){
   datahora();
   time_t tt=time(NULL);
   StaticJsonDocument<256> doc;
@@ -354,9 +354,9 @@ void payloadMQTT(){
   doc["mac"] = mac;
   doc["hora"]=tt;
   doc["temperatura"]=tempAtual;
-  doc["movimento"]=movimento; 
-  doc["evaporadora"]=(digitalRead(eva));
-  doc["condensadora"]=(digitalRead(con));
+  doc["movimento"]= movimento; 
+  doc["evaporadora"]=!(digitalRead(eva));
+  doc["condensadora"]=!(digitalRead(con));
   char buffer1[256];
   serializeJson(doc, buffer1);
   client.publish(topic1, buffer1);
@@ -365,27 +365,27 @@ void arLiga(){
   String hora;
   hora= data.tm_hour;
   //liga ar
-  digitalWrite(eva, 1);
-  digitalWrite(ledEva, digitalRead(eva));
+  digitalWrite(eva, 0);
+  digitalWrite(ledEva, !digitalRead(eva));
   Serial.println(tempAtual);
   Serial.println(tIdeal);
   if(tempAtual>=(tIdeal+1)){ //quente
-    if(digitalRead(eva)==1){
-      digitalWrite(con, 1);
-      digitalWrite(ledCon, digitalRead(con));
+    if(digitalRead(eva)==0){
+      digitalWrite(con, 0);
+      digitalWrite(ledCon, !digitalRead(con));
       Serial.println("condensadora ligada");
     } else {
-      digitalWrite(eva, 1);
-      digitalWrite(ledEva, digitalRead(eva));
-      digitalWrite(con, 1);
-      digitalWrite(ledCon, digitalRead(con));
+      digitalWrite(eva, 0);
+      digitalWrite(ledEva, !digitalRead(eva));
+      digitalWrite(con, 0);
+      digitalWrite(ledCon, !digitalRead(con));
       Serial.println("condensadora ligada");
     }		
   } else if(tempAtual<=(tIdeal-1)){ //frio
-    digitalWrite(con, 0);
-    digitalWrite(ledCon, digitalRead(con));
-    digitalWrite(eva, 1);
-    digitalWrite(ledEva, digitalRead(eva));
+    digitalWrite(con, 1);
+    digitalWrite(ledCon, !digitalRead(con));
+    digitalWrite(eva, 0);
+    digitalWrite(ledEva, !digitalRead(eva));
     Serial.println("condensadora desligada");	
 
   } else if(tempAtual==tIdeal){
@@ -538,7 +538,7 @@ void setup(){
   redee();  //define as variaveis
   PinConfig();
   xTaskCreatePinnedToCore (verificaDia, "arliga", 5000, NULL, 1, NULL, 0);
-  attachInterrupt (digitalPinToInterrupt(pirPin1), mudaStatusPir, RISING);
+  attachInterrupt(digitalPinToInterrupt(pirPin1), mudaStatusPir, RISING);
   datahora();
   ip=WiFi.localIP(); //pega ip
   mac=DEVICE_ID;     //pega mac
