@@ -563,9 +563,6 @@ void loop(){
     payloadMQTT();
     previousMillis1=currentMillis1;
   }
-  if(ultimoGatilho<millis()){
-    movimento=0;
-  } 
   if(week != data_semana){
     StaticJsonDocument<256> doc5;
     doc5["local"] = "AR-redacao-CK";
@@ -578,6 +575,9 @@ void loop(){
     delay(3000);
   }
   sensorTemp();
+  if(ultimoGatilho<millis()){
+    movimento=0;
+  } 
   delay(500);
 }
 //mac 1 biitF4A6F9A3C9C8 redação reuniao
